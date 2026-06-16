@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatToEat - 智慧美食決策器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==================== 1. 網頁視覺排版 (CSS) ==================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #2b2b2b;
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+        /* 大型圖標顯示區塊 */
+        .icon-box {
+            font-size: 80px;
+            color: #ff6b6b;
+            margin: 20px auto;
+            height: 120px;
+            width: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff5f5;
+            border-radius: 50%;
+            border: 3px dashed #ffe3e3;
+        }
+        /* 電子抽籤機快速旋轉與震動的 CSS 動畫 */
+        .spinning {
+            animation: slotSpin 0.12s linear infinite;
+        }
+        @keyframes slotSpin {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.7; color: #ff6b6b; }
+            50% { transform: translateY(-8px) scale(0.95) rotate(5deg); color: #4ecdc4; }
+            100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.7; color: #fca311; }
+        }
+        h3 {
+            font-size: 1.4rem;
+            color: #333;
+            margin: 15px 0;
+            min-height: 35px;
+        }
+        /* API 附加資訊區塊 */
+        .info-text {
+            background: #f8f9fa;
+            border-left: 4px solid #fca311;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            min-height: 50px;
+            margin: 20px 0;
+            text-align: left;
+            color: #555;
+            line-height: 1.4;
+        }
+        /* 按鈕視覺設計與狀態控制 */
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-start {
+            background: #4ecdc4;
+            color: white;
+        }
+        .btn-start:hover:not(:disabled) {
+            background: #3ebcb4;
+            transform: translateY(-2px);
+        }
+        .btn-save {
+            background: #ff6b6b;
+            color: white;
+        }
+        .btn-save:hover:not(:disabled) {
+            background: #fa5252;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #ced4da !important;
+            color: #6c757d !important;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        #msg {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>今天吃什麼？</h2>
+        <div class="subtitle">智慧美食決策與飲食記錄器</div>
+        
+        <div class="icon-box">
+            <i id="food-icon" class="fa-solid fa-cookie-bite"></i>
+        </div>
+        
+        <h3 id="food-name">命運轉盤準備就緒</h3>
+        
+        <div class="info-text">
+            <strong style="color: #fca311;"><i class="fa-solid fa-quote-left"></i> 用餐小語：</strong>
+            <span id="api-info">點擊開始抽籤，解鎖今日用餐指南。</span>
+        </div>
+        
+        <button class="btn-start" id="btn-spin" onclick="spinFood()">
+            <i class="fa-solid fa-dice"></i> 開始抽籤
+        </button>
+        <button class="btn-save" id="btn-confirm" onclick="saveToSheet()" disabled>
+            <i class="fa-solid fa-cloud-arrow-up"></i> 確認吃這個，記錄下來！
+        </button>
+        
+        <p id="msg"></p>
+    </div>
+
+    <script>
+        // ==================== 2. 業務邏輯與資料串接 (JavaScript) ====================
+
+        // 核心美食資料庫：完整 20 種組合，嚴選 Font Awesome 6 免費圖標
+        const foods = [
+            { name: "台式滷肉飯", icon: "fa-bowl-rice" },
+            { name: "日式拉麵", icon: "fa-bowl-food" },
+            { name: "川味麻辣鍋", icon: "fa-pepper-hot" },
+            { name: "美味鮮魚料理", icon: "fa-fish" },
+            { name: "熱炒海鮮大餐", icon: "fa-shrimp" },
+            { name: "美式經典漢堡", icon: "fa-burger" },
+            { name: "義式披薩", icon: "fa-pizza-slice" },
+            { name: "美式炸雞腿", icon: "fa-drumstick-bite" },
+            { name: "街頭香脆熱狗堡", icon: "fa-hotdog" },
+            { name: "歐式起司拼盤", icon: "fa-cheese" },
+            { name: "培根蛋早午餐", icon: "fa-bacon" },
+            { name: "法式長棍麵包", icon: "fa-bread-slice" },
+            { name: "健康鮮蔬沙拉", icon: "fa-carrot" },
+            { name: "季節鮮果拼盤", icon: "fa-apple-whole" },
+            { name: "夏日清涼冰淇淋", icon: "fa-ice-cream" },
+            { name: "精緻鮮奶油蛋糕", icon: "fa-cake-candles" },
+            { name: "巧克力碎片餅乾", icon: "fa-cookie-bite" },
+            { name: "香醇熱咖啡", icon: "fa-mug-hot" },
+            { name: "微醺浪漫紅酒", icon: "fa-wine-glass" },
+            { name: "今天吃大餐", icon: "fa-utensils" }
+        ];
+
+        // ⚠️ 關鍵步驟：稍後完成 Google 部署後，請將 Web App 網址貼在下方引號內
+        const gasUrl = "YOUR_GAS_WEB_APP_URL"; 
+
+        // 全域變態，用來儲存當前抽中的最終結果
+        let selectedData = { name: "", icon: "", quote: "" };
+
+        /**
+         * 功能一：處理抽籤動態效果與呼叫免 Key API
+         */
+        async function spinFood() {
+            const iconEl = document.getElementById('food-icon');
+            const nameEl = document.getElementById('food-name');
+            const infoEl = document.getElementById('api-info');
+            const btnSpin = document.getElementById('btn-spin');
+            const btnConfirm = document.getElementById('btn-confirm');
+            const msgEl = document.getElementById('msg');
+            
+            // 進入抽籤狀態：鎖定按鈕、啟動 CSS 旋轉特效、重置提示
+            btnSpin.disabled = true;
+            btnConfirm.disabled = true;
+            iconEl.classList.add('spinning');
+            nameEl.textContent = "電子抽籤機滾動中...";
+            infoEl.textContent = "正在向宇宙接收大數據建議...";
+            msgEl.textContent = "";
+
+            // 特效維持 1.5 秒 (利用 Promise 搭配 setTimeout)
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // 結束抽籤狀態：移除特效
+            iconEl.classList.remove('spinning');
+
+            // 隨機抽選出一個美食項目
+            const result = foods[Math.floor(Math.random() * foods.length)];
+            
+            // 更新網頁上的圖標與食物名稱
+            iconEl.className = `fa-solid ${result.icon}`;
+            nameEl.textContent = result.name;
+
+            // 背景自動呼叫免費免 Key 隨機金句 API 做為用餐小語
+            try {
+                const apiResponse = await fetch('https://dummyjson.com/quotes/random');
+                if (!apiResponse.ok) throw new Error();
+                const apiData = await apiResponse.json();
+                infoEl.textContent = `"${apiData.quote}" — ${apiData.author}`;
+            } catch (e) {
+                // 若 API 偶爾連線失敗，自動啟用在地防護備用文字
+                infoEl.textContent = "好好吃飯，就是對自己最好的照顧！";
+            }
+
+            // 將結果儲存到全域變數，供寫入資料庫使用
+            selectedData = {
+                name: result.name,
+                icon: result.icon,
+                quote: infoEl.textContent
+            };
+
+            // 恢復「開始抽籤」功能，並正式啟用「記錄按鈕」
+            btnSpin.disabled = false;
+            btnConfirm.disabled = false;
+        }
+
+        /**
+         * 功能二：使用原生 fetch 發送 POST 請求至 GAS (寫入 Google 試算表)
+         */
+        async function saveToSheet() {
+            // 防呆機制
+            if (gasUrl === "YOUR_GAS_WEB_APP_URL") {
+                alert("未偵測到後端網址！請先依教學完成 GAS 部署並填入 gasUrl 變數中。");
+                return;
+            }
+            
+            const msgEl = document.getElementById('msg');
+            const btnConfirm = document.getElementById('btn-confirm');
+            
+            btnConfirm.disabled = true; // 防止使用者連點重複送出
+            msgEl.style.color = "#fca311";
+            msgEl.textContent = "⏳ 正在傳送至雲端試算表...";
+
+            try {
+                /*
+                 * 架構師的精簡解法：
+                 * 1. 為了徹底避開瀏覽器 CORS 的 Preflight (OPTIONS) 預檢限制阻擋，我們使用 'text/plain' 傳送 JSON 字串。
+                 * 2. 設定 redirect: "follow" 以順利跟隨 Google 伺服器的 302 重新導向。
+                 */
+                const response = await fetch(gasUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(selectedData),
+                    redirect: "follow" 
+                });
+
+                const resText = await response.json();
+
+                if (resText.result === "success") {
+                    msgEl.style.color = "#2b9348";
+                    msgEl.textContent = "✅ 記錄成功！已成功寫入試算表第一列。";
+                } else {
+                    throw new Error(resText.error);
+                }
+            } catch (err) {
+                console.error(err);
+                msgEl.style.color = "#e63946";
+                msgEl.textContent = "❌ 寫入失敗，請檢查 GAS 權限或瀏覽器主控台。";
+                btnConfirm.disabled = false; // 失敗時允許再次點擊嘗試
+            }
+        }
+    </script>
+</body>
+</html>
