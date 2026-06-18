@@ -166,7 +166,7 @@
         };
 
         // ⚠️ 關鍵步驟：請在此處貼上你的 Google Apps Script 部署網址
-        const gasUrl = "YOUR_GAS_WEB_APP_URL"; 
+        const gasUrl = "https://script.google.com/macros/s/AKfycbyVrngSLEiIUU5M5bURbz8Tq--ehOtI-_BoPBUUGqLVWV6BQm7OtyqxUWAq-JEBkumn/exec"; 
 
         let customFoods = JSON.parse(localStorage.getItem('myCustomFoods')) || [];
         customFoods = customFoods.map(f => f.category ? f : { ...f, category: 'main' });
