@@ -54,10 +54,14 @@
         .btn-start:hover:not(:disabled) { background: #3ebcb4; transform: translateY(-2px); }
         .btn-save { background: #ff6b6b; color: white; }
         .btn-save:hover:not(:disabled) { background: #fa5252; transform: translateY(-2px); }
-        .btn-yesno { background: #9b59b6; color: white; } 
+        .btn-yesno { background: #9b59b6; color: white; }
         .btn-yesno:hover:not(:disabled) { background: #8e44ad; transform: translateY(-2px); }
-        .btn-budget { background: #f1c40f; color: #333; } 
+        .btn-budget { background: #f1c40f; color: #333; }
         .btn-budget:hover:not(:disabled) { background: #f39c12; transform: translateY(-2px); color: white;}
+        .btn-cloud { background: #3498db; color: white; }
+        .btn-cloud:hover:not(:disabled) { background: #2980b9; transform: translateY(-2px); }
+        .btn-special { background: #2c3e50; color: white; }
+        .btn-special:hover:not(:disabled) { background: #1a252f; transform: translateY(-2px); }
         button:disabled { background: #ced4da !important; color: #6c757d !important; cursor: not-allowed; transform: none !important; }
         #msg { font-size: 0.8rem; font-weight: bold; margin-top: 10px; height: 18px; }
 
@@ -166,7 +170,7 @@
         };
 
         // ⚠️ 關鍵步驟：請在此處貼上你的 Google Apps Script 部署網址
-        const gasUrl = "https://script.google.com/macros/s/AKfycbyVrngSLEiIUU5M5bURbz8Tq--ehOtI-_BoPBUUGqLVWV6BQm7OtyqxUWAq-JEBkumn/exec"; 
+        const gasUrl = "https://script.google.com/macros/s/AKfycbzjxRBZfc5fnNC3ByJPZUabnb-o-kecHqL63a3dP7WmjJa9MZXCdd6W-2Nz0etLWwsf/exec"; 
 
         let customFoods = JSON.parse(localStorage.getItem('myCustomFoods')) || [];
         customFoods = customFoods.map(f => f.category ? f : { ...f, category: 'main' });
