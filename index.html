@@ -5,98 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatToEat - 智慧美食決策器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* ==================== 1. 網頁視覺排版 (CSS) ==================== */
+        /* ==================== 1. 網頁視覺排版 ==================== */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f6f9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 30px 0;
-        }
-        .card, .sub-box {
-            background: #ffffff; padding: 25px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 90%; max-width: 450px;
-            margin-bottom: 20px; text-align: center;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 30px 0; }
+        .card, .sub-box { background: #ffffff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 90%; max-width: 450px; margin-bottom: 20px; text-align: center; }
         h2 { color: #2b2b2b; font-size: 1.6rem; margin-bottom: 5px; }
         .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 20px; }
         
-        /* 類別選擇器 */
         .category-tabs { display: flex; background: #e9ecef; border-radius: 12px; margin-bottom: 20px; padding: 4px; }
         .tab-label { flex: 1; cursor: pointer; }
         .tab-radio { display: none; }
         .tab-text { display: block; padding: 10px 5px; font-weight: bold; color: #6c757d; border-radius: 8px; transition: 0.3s; font-size: 0.95rem; }
         .tab-radio:checked + .tab-text { background: #4ecdc4; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 大型圖標 */
-        .icon-box {
-            font-size: 80px; color: #ff6b6b; margin: 10px auto; height: 120px; width: 120px;
-            display: flex; justify-content: center; align-items: center;
-            background: #fff5f5; border-radius: 50%; border: 3px dashed #ffe3e3;
-        }
+        .icon-box { font-size: 80px; color: #ff6b6b; margin: 10px auto; height: 120px; width: 120px; display: flex; justify-content: center; align-items: center; background: #fff5f5; border-radius: 50%; border: 3px dashed #ffe3e3; position: relative; }
         .spinning { animation: slotSpin 0.1s linear infinite; }
-        @keyframes slotSpin {
-            0% { transform: translateY(0) scale(1); opacity: 0.7; color: #ff6b6b; }
-            50% { transform: translateY(-8px) scale(0.95); color: #4ecdc4; }
-            100% { transform: translateY(0) scale(1); opacity: 0.7; color: #fca311; }
-        }
+        @keyframes slotSpin { 0% { transform: translateY(0) scale(1); color: #ff6b6b; } 50% { transform: translateY(-8px) scale(0.95); color: #4ecdc4; } 100% { transform: translateY(0) scale(1); color: #fca311; } }
+        
         h3 { font-size: 1.4rem; color: #333; margin: 15px 0; min-height: 35px; }
         .info-text { background: #f8f9fa; border-left: 4px solid #fca311; padding: 12px; border-radius: 6px; font-size: 0.85rem; min-height: 50px; margin: 15px 0; text-align: left; color: #555; }
         
-        /* 按鈕視覺 */
         button { width: 100%; padding: 14px; margin: 6px 0; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-start { background: #4ecdc4; color: white; }
-        .btn-start:hover:not(:disabled) { background: #3ebcb4; transform: translateY(-2px); }
-        .btn-save { background: #ff6b6b; color: white; }
-        .btn-save:hover:not(:disabled) { background: #fa5252; transform: translateY(-2px); }
-        .btn-yesno { background: #9b59b6; color: white; }
-        .btn-yesno:hover:not(:disabled) { background: #8e44ad; transform: translateY(-2px); }
-        .btn-budget { background: #f1c40f; color: #333; }
-        .btn-budget:hover:not(:disabled) { background: #f39c12; transform: translateY(-2px); color: white;}
-        .btn-cloud { background: #3498db; color: white; }
-        .btn-cloud:hover:not(:disabled) { background: #2980b9; transform: translateY(-2px); }
-        .btn-special { background: #2c3e50; color: white; }
-        .btn-special:hover:not(:disabled) { background: #1a252f; transform: translateY(-2px); }
+        .btn-start { background: #4ecdc4; color: white; } .btn-start:hover:not(:disabled) { background: #3ebcb4; transform: translateY(-2px); }
+        .btn-save { background: #ff6b6b; color: white; } .btn-save:hover:not(:disabled) { background: #fa5252; transform: translateY(-2px); }
+        .btn-yesno { background: #9b59b6; color: white; } .btn-yesno:hover:not(:disabled) { background: #8e44ad; transform: translateY(-2px); }
+        .btn-budget { background: #f1c40f; color: #333; } .btn-budget:hover:not(:disabled) { background: #f39c12; transform: translateY(-2px); color: white;}
+        .btn-cloud { background: #3498db; color: white; } .btn-cloud:hover:not(:disabled) { background: #2980b9; transform: translateY(-2px); }
+        .btn-special { background: #2c3e50; color: white; } .btn-special:hover:not(:disabled) { background: #1a252f; transform: translateY(-2px); }
         button:disabled { background: #ced4da !important; color: #6c757d !important; cursor: not-allowed; transform: none !important; }
         #msg { font-size: 0.8rem; font-weight: bold; margin-top: 10px; height: 18px; }
 
-        /* 子區塊排版 */
         .sub-box h4 { margin-bottom: 12px; color: #333; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
-        .input-group select, .input-group input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .input-group select { width: 90px; background: #f8f9fa; }
-        .input-group input { flex: 1; }
-        .input-group button { width: auto; margin: 0; padding: 10px 15px; background: #fca311; color: white; }
-        .fav-list { list-style: none; max-height: 150px; overflow-y: auto; text-align: left; }
-        .fav-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; font-size: 0.85rem; color: #444; }
-        .cat-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; color: white; }
-        .bg-main { background: #ff9f43; } .bg-dessert { background: #e84393; } .bg-bev { background: #00cec9; }
-        .btn-del { background: none; color: #aaa; padding: 0; width: auto; font-size: 0.9rem; }
-        .btn-del:hover { color: #ff6b6b; }
-        .history-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 5px; text-align: left; }
-        .history-table th { background: #f1f3f5; padding: 8px; border-bottom: 2px solid #dee2e6; }
-        .history-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        .status-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .status-wait { background: #fff3cd; color: #856404; } .status-done { background: #d4edda; color: #155724; }
-
-        /* 決策器結果框 */
-        .result-box {
-            font-size: 2rem; font-weight: bold; min-height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: #f8f9fa; border-radius: 12px; margin-bottom: 15px; color: #adb5bd; border: 2px dashed #dee2e6; padding: 10px;
-        }
+        .result-box { font-size: 2rem; font-weight: bold; min-height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #f8f9fa; border-radius: 12px; margin-bottom: 15px; color: #adb5bd; border: 2px dashed #dee2e6; padding: 10px; }
         .yes-text { color: #2b9348; } .no-text { color: #e63946; }
+        
+        /* 歷史與雲端專區 */
+        .history-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 5px; text-align: left; }
+        .history-table th { background: #f1f3f5; padding: 8px; border-bottom: 2px solid #dee2e6; position: sticky; top: 0; }
+        .history-table td { padding: 8px; border-bottom: 1px solid #eee; }
+        .cloud-container { max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; display: none; margin-top: 10px;}
+        
+        /* 報告與防膩警告 */
+        .chart-container { position: relative; width: 100%; max-width: 300px; margin: 10px auto; display: none; }
+        .report-comment { font-size: 0.85rem; color: #e63946; font-weight: bold; margin-top: 10px; display: none; }
+        .alert-badge { background: #e63946; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; position: absolute; top: -10px; right: -10px; display: none; animation: pop 0.3s ease-out; }
+        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        /* ==================== 🌟 排行榜專屬樣式 ==================== */
+        .leaderboard-wrapper { background: #fff; border-radius: 12px; border: 2px solid #34495e; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .leaderboard-header { background: #34495e; color: #fff; display: flex; padding: 8px 15px; font-size: 0.8rem; font-weight: bold; }
+        .lb-col-rank { width: 45px; text-align: center; } .lb-col-name { flex: 1; text-align: left; padding-left: 10px;} .lb-col-score { width: 90px; text-align: right; }
+        .leaderboard-container { max-height: 280px; overflow-y: auto; background: #f8f9fa; }
+        .lb-row { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-size: 0.9rem; transition: background 0.2s; }
+        .lb-row:hover { background: #fff; }
+        .is-me-row { background: #fff3cd !important; font-weight: bold; border-left: 4px solid #f1c40f; }
+        .lb-rank { width: 45px; text-align: center; font-weight: bold; color: #7f8c8d; font-size: 1rem; }
+        .rank-1 { color: #f1c40f; font-size: 1.3rem; text-shadow: 0 0 5px rgba(241,196,15,0.5); }
+        .rank-2 { color: #bdc3c7; font-size: 1.2rem; }
+        .rank-3 { color: #cd7f32; font-size: 1.1rem; }
+        .lb-name { flex: 1; text-align: left; padding-left: 10px; color: #2c3e50; }
+        .lb-score { width: 90px; text-align: right; font-weight: bold; color: #d35400; font-family: monospace; font-size: 1rem; }
+        
+        /* 底部固定欄 (自己的名次) */
+        .my-rank-banner { background: #2c3e50; color: white; padding: 12px 15px; display: flex; align-items: center; border-top: 3px solid #f1c40f; font-size: 0.95rem; }
+        .my-rank-banner .lb-rank { color: #fff; }
+        .my-rank-banner .lb-name { color: #f1c40f; font-weight: bold; }
+        .my-rank-banner .lb-score { color: #f1c40f; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2>今天吃什麼？</h2>
-        <div class="subtitle">智慧美食決策與飲食記錄器</div>
+        <div class="subtitle">智慧美食決策器</div>
         
         <div class="category-tabs">
             <label class="tab-label"><input type="radio" class="tab-radio" name="foodCategory" value="main" checked onchange="changeCategoryUI('fa-bowl-rice')"><span class="tab-text">🍱 主食正餐</span></label>
@@ -104,207 +88,296 @@
             <label class="tab-label"><input type="radio" class="tab-radio" name="foodCategory" value="beverage" onchange="changeCategoryUI('fa-mug-hot')"><span class="tab-text">🧋 解渴飲料</span></label>
         </div>
 
-        <div class="icon-box"><i id="food-icon" class="fa-solid fa-bowl-rice"></i></div>
+        <div class="icon-box">
+            <i id="food-icon" class="fa-solid fa-bowl-rice"></i>
+            <div id="cooldown-alert" class="alert-badge"><i class="fa-solid fa-triangle-exclamation"></i> 防膩重抽！</div>
+        </div>
         <h3 id="food-name">請選擇類別並開始抽籤</h3>
         
-        <div class="info-text">
-            <strong style="color: #fca311;"><i class="fa-solid fa-quote-left"></i> 用餐小語：</strong>
-            <span id="api-info">點擊開始抽籤，解鎖今日指南。</span>
-        </div>
+        <div class="info-text"><strong style="color: #fca311;"><i class="fa-solid fa-quote-left"></i> 系統訊息：</strong><span id="api-info">點擊開始抽籤，解鎖今日指南。</span></div>
         
-        <button class="btn-start" id="btn-spin" onclick="spinFood()"><i class="fa-solid fa-dice"></i> 隨機幫我選一家</button>
-        <button class="btn-save" id="btn-confirm" onclick="saveToSheet()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> 確認吃這個，記錄下來！</button>
+        <button class="btn-start" id="btn-spin" onclick="spinFood()"><i class="fa-solid fa-dice"></i> 隨機幫我選一家 (+10分)</button>
+        <button class="btn-special" id="btn-cloud-spin" onclick="spinCloudBox()"><i class="fa-solid fa-box-open"></i> 抽雲端愛店盲盒 (+15分)</button>
+        <button class="btn-save" id="btn-confirm" onclick="saveToSheet()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> 確認吃這個，記錄下來！ (+50分)</button>
         <p id="msg"></p>
+    </div>
+
+    <div class="sub-box" style="padding: 15px;">
+        <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> 全球吃貨爭霸排行榜</h4>
+        
+        <div class="leaderboard-wrapper">
+            <div class="leaderboard-header">
+                <div class="lb-col-rank">排名</div>
+                <div class="lb-col-name">名稱</div>
+                <div class="lb-col-score">美食值</div>
+            </div>
+            
+            <div class="leaderboard-container" id="leaderboard-list"></div>
+            
+            <div class="my-rank-banner">
+                <div class="lb-rank" id="my-rank-display">--</div>
+                <div class="lb-name" id="my-name-display">我 (努力吃吃吃)</div>
+                <div class="lb-score" id="my-score-display">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sub-box">
+        <h4><i class="fa-solid fa-chart-pie" style="color: #e67e22;"></i> 我的吃貨報告</h4>
+        <button class="btn-budget" onclick="generateReport()" style="background: #e67e22; color: white;"><i class="fa-solid fa-magnifying-glass-chart"></i> 產出本月圓餅圖</button>
+        
+        <div class="chart-container" id="chart-wrapper"><canvas id="myPieChart"></canvas></div>
+        <p class="report-comment" id="report-comment"></p>
+        
+        <button class="btn-cloud" id="btn-cloud" onclick="fetchCloudDataUI()" style="margin-top: 15px;"><i class="fa-solid fa-cloud-arrow-down"></i> 查看完整雲端紀錄</button>
+        <div class="cloud-container" id="cloud-container">
+            <table class="history-table">
+                <thead><tr><th>紀錄時間</th><th>吃過的食物</th></tr></thead>
+                <tbody id="cloud-list-container"></tbody>
+            </table>
+        </div>
     </div>
 
     <div class="sub-box">
         <h4><i class="fa-solid fa-wallet" style="color: #f1c40f;"></i> 今日預算決策器</h4>
-        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">月底吃土還是財富自由？讓命運決定！</p>
-        
-        <div class="result-box" id="budget-result">
-            <i class="fa-solid fa-sack-dollar"></i>
-        </div>
-        
-        <button class="btn-budget" id="btn-budget" onclick="decideBudget()">
-            <i class="fa-solid fa-coins"></i> 抽今日預算
-        </button>
+        <div class="result-box" id="budget-result"><i class="fa-solid fa-sack-dollar"></i></div>
+        <button class="btn-budget" id="btn-budget" onclick="decideBudget()"><i class="fa-solid fa-coins"></i> 抽今日預算</button>
     </div>
 
     <div class="sub-box">
         <h4><i class="fa-solid fa-store" style="color: #9b59b6;"></i> 站在店門口猶豫不決？</h4>
-        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">已經有想吃的那家店，但不知道該不該吃？</p>
-        
-        <div class="result-box" id="yes-no-result" style="flex-direction: row;">
-            <i class="fa-solid fa-circle-question"></i>
-        </div>
-        
-        <button class="btn-yesno" id="btn-yesno" onclick="decideYesNo()">
-            <i class="fa-solid fa-scale-balanced"></i> 幫我決定：吃這家好嗎？
-        </button>
-    </div>
-
-    <div class="sub-box">
-        <h4 style="justify-content: flex-start;"><i class="fa-solid fa-heart" style="color: #ff6b6b;"></i> 我的口袋名單 (參與抽籤)</h4>
-        <div class="input-group">
-            <select id="custom-cat"><option value="main">主食</option><option value="dessert">甜點</option><option value="beverage">飲料</option></select>
-            <input type="text" id="custom-food-input" placeholder="例：巷口火雞肉飯" maxlength="15">
-            <button onclick="addCustomFood()"><i class="fa-solid fa-plus"></i></button>
-        </div>
-        <ul class="fav-list" id="fav-list-container"></ul>
-    </div>
-
-    <div class="sub-box">
-        <h4 style="justify-content: flex-start;"><i class="fa-solid fa-clock-rotate-left" style="color: #4ecdc4;"></i> 最近抽籤歷史 (最新5筆)</h4>
-        <table class="history-table">
-            <thead><tr><th>時間</th><th>抽中內容</th><th>雲端</th></tr></thead>
-            <tbody id="history-list-container"></tbody>
-        </table>
+        <div class="result-box" id="yes-no-result" style="flex-direction: row;"><i class="fa-solid fa-circle-question"></i></div>
+        <button class="btn-yesno" id="btn-yesno" onclick="decideYesNo()"><i class="fa-solid fa-scale-balanced"></i> 幫我決定：吃這家好嗎？</button>
     </div>
 
     <script>
-        // ==================== 資料庫與初始化 ====================
+        // 預設資料庫
         const foodDatabase = {
-            main: [ { name: "台式滷肉飯", icon: "fa-bowl-rice" }, { name: "經典牛肉麵", icon: "fa-bowl-food" }, { name: "黃金蛋炒飯", icon: "fa-bowl-rice" }, { name: "手工水餃", icon: "fa-dumpling" }, { name: "義大利麵", icon: "fa-plate-wheat" }, { name: "瑪格麗特披薩", icon: "fa-pizza-slice" }, { name: "美式重磅漢堡", icon: "fa-burger" }, { name: "日式豚骨拉麵", icon: "fa-bowl-food" }, { name: "迴轉壽司", icon: "fa-fish" }, { name: "厚切排骨便當", icon: "fa-box" }, { name: "濃郁咖哩飯", icon: "fa-bowl-rice" }, { name: "讚岐烏龍麵", icon: "fa-bowl-food" }, { name: "鐵板烤肉飯", icon: "fa-fire-burner" }, { name: "嘉義火雞肉飯", icon: "fa-bowl-rice" } ],
-            dessert: [ { name: "巧克力蛋糕", icon: "fa-cake-candles" }, { name: "香草冰淇淋", icon: "fa-ice-cream" }, { name: "焦糖布丁", icon: "fa-circle" }, { name: "奶油泡芙", icon: "fa-cookie" }, { name: "綜合豆花", icon: "fa-bowl-food" }, { name: "法式馬卡龍", icon: "fa-cookie-bite" } ],
-            beverage: [ { name: "經典珍珠奶茶", icon: "fa-mug-hot" }, { name: "冰美式咖啡", icon: "fa-mug-hot" }, { name: "無糖綠茶", icon: "fa-glass-water" }, { name: "綜合鮮果汁", icon: "fa-apple-whole" }, { name: "芒果冰沙", icon: "fa-ice-cream" }, { name: "黑糖珍珠鮮奶", icon: "fa-glass-water" } ]
+            main: [ { name: "台式滷肉飯", icon: "fa-bowl-rice" }, { name: "經典牛肉麵", icon: "fa-bowl-food" }, { name: "黃金蛋炒飯", icon: "fa-bowl-rice" }, { name: "手工水餃", icon: "fa-dumpling" }, { name: "義大利麵", icon: "fa-plate-wheat" }, { name: "瑪格麗特披薩", icon: "fa-pizza-slice" }, { name: "美式重磅漢堡", icon: "fa-burger" }, { name: "日式豚骨拉麵", icon: "fa-bowl-food" }, { name: "厚切排骨便當", icon: "fa-box" }, { name: "濃郁咖哩飯", icon: "fa-bowl-rice" } ],
+            dessert: [ { name: "巧克力蛋糕", icon: "fa-cake-candles" }, { name: "香草冰淇淋", icon: "fa-ice-cream" }, { name: "焦糖布丁", icon: "fa-circle" }, { name: "奶油泡芙", icon: "fa-cookie" } ],
+            beverage: [ { name: "經典珍珠奶茶", icon: "fa-mug-hot" }, { name: "冰美式咖啡", icon: "fa-mug-hot" }, { name: "無糖綠茶", icon: "fa-glass-water" }, { name: "芒果冰沙", icon: "fa-ice-cream" } ]
         };
 
-        // ⚠️ 關鍵步驟：請在此處貼上你的 Google Apps Script 部署網址
+        // ⚠️ 請填入你的 GAS 網址
         const gasUrl = "https://script.google.com/macros/s/AKfycbzjxRBZfc5fnNC3ByJPZUabnb-o-kecHqL63a3dP7WmjJa9MZXCdd6W-2Nz0etLWwsf/exec"; 
 
-        let customFoods = JSON.parse(localStorage.getItem('myCustomFoods')) || [];
-        customFoods = customFoods.map(f => f.category ? f : { ...f, category: 'main' });
-        let drawHistory = JSON.parse(localStorage.getItem('myDrawHistory')) || [];
-        let selectedData = { name: "", icon: "", quote: "" };
+        let selectedData = { name: "", icon: "" };
+        let cloudDataCache = []; 
+        let myChart = null; 
 
-        renderCustomFoods(); renderHistory();
+        // ==================== 🏆 積分與排行榜系統 ====================
+        let myFoodiePoints = parseInt(localStorage.getItem('myFoodiePoints')) || 0;
+        let fakeLeaderboard = JSON.parse(localStorage.getItem('fakeLeaderboard'));
 
-        // ==================== 主食抽籤邏輯 ====================
+        if (!fakeLeaderboard) {
+            fakeLeaderboard = [];
+            const prefixes = ["貪吃", "飢餓的", "無情", "黃金", "快樂的", "神秘", "地獄", "傳說的", "夜貓子", "微胖"];
+            const suffixes = ["老饕", "吃貨", "食神", "乾飯人", "美食家", "大胃王", "品嚐者", "獵人", "嘴饞鬼", "橘貓"];
+            
+            let currentScore = 999999;
+            for (let i = 1; i <= 100; i++) {
+                const name = prefixes[Math.floor(Math.random() * prefixes.length)] + suffixes[Math.floor(Math.random() * suffixes.length)] + (Math.floor(Math.random() * 99) + 1);
+                fakeLeaderboard.push({ name: name, score: currentScore, isMe: false });
+                currentScore -= Math.floor(Math.random() * 8000) + 2000;
+                if (currentScore < 5000) currentScore = 5000;
+            }
+            localStorage.setItem('fakeLeaderboard', JSON.stringify(fakeLeaderboard));
+        }
+
+        function addPoints(pts) {
+            myFoodiePoints += pts;
+            localStorage.setItem('myFoodiePoints', myFoodiePoints);
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            let allUsers = [...fakeLeaderboard, { name: "我 (努力吃吃吃)", score: myFoodiePoints, isMe: true }];
+            allUsers.sort((a, b) => b.score - a.score);
+
+            const listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = "";
+            let myRank = ">100";
+            
+            allUsers.forEach((user, index) => {
+                const rank = index + 1;
+                if (user.isMe) myRank = rank;
+                
+                if (rank <= 100 || user.isMe) {
+                    let rankStyle = "lb-rank";
+                    let rankDisplay = rank;
+                    
+                    if (rank === 1) { rankStyle += " rank-1"; rankDisplay = '<i class="fa-solid fa-crown"></i> 1'; }
+                    else if (rank === 2) { rankStyle += " rank-2"; }
+                    else if (rank === 3) { rankStyle += " rank-3"; }
+
+                    const isMeClass = user.isMe ? "is-me-row" : "";
+                    
+                    if(rank <= 100) {
+                        listContainer.innerHTML += `
+                            <div class="lb-row ${isMeClass}">
+                                <div class="${rankStyle}">${rankDisplay}</div>
+                                <div class="lb-name">${user.name}</div>
+                                <div class="lb-score">${user.score.toLocaleString()}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            document.getElementById('my-rank-display').innerHTML = myRank <= 100 ? myRank : "100+";
+            document.getElementById('my-score-display').textContent = myFoodiePoints.toLocaleString();
+        }
+
+        window.onload = async () => {
+            renderLeaderboard();
+            if (gasUrl !== "YOUR_GAS_WEB_APP_URL") {
+                try {
+                    const res = await fetch(gasUrl); const data = await res.json();
+                    if(data.result === "success") cloudDataCache = data.data;
+                } catch(e) { console.log("背景載入雲端資料失敗"); }
+            }
+        };
+
         function changeCategoryUI(iconClass) {
             document.getElementById('food-icon').className = `fa-solid ${iconClass}`;
             document.getElementById('food-name').textContent = "準備好就按下抽籤！";
             document.getElementById('msg').textContent = "";
             document.getElementById('btn-confirm').disabled = true;
+            document.getElementById('cooldown-alert').style.display = 'none';
         }
 
-        async function spinFood() {
+        async function spinFood(retryCount = 0) {
             const iconEl = document.getElementById('food-icon'); const nameEl = document.getElementById('food-name');
             const infoEl = document.getElementById('api-info'); const btnSpin = document.getElementById('btn-spin');
-            const btnConfirm = document.getElementById('btn-confirm');
+            const btnConfirm = document.getElementById('btn-confirm'); const alertBadge = document.getElementById('cooldown-alert');
+            
+            alertBadge.style.display = 'none';
+            btnSpin.disabled = true; btnConfirm.disabled = true; document.getElementById('btn-cloud-spin').disabled = true;
+            iconEl.classList.add('spinning');
+            nameEl.textContent = retryCount > 0 ? "重新洗牌中..." : "資料庫快篩抽籤中...";
+            infoEl.textContent = retryCount > 0 ? "觸發防膩機制，幫你換一家！" : "正在向宇宙接收大數據建議...";
+
+            await new Promise(r => setTimeout(r, 1000));
+            iconEl.classList.remove('spinning');
+            
             const activeCategory = document.querySelector('input[name="foodCategory"]:checked').value;
-            const totalPool = foodDatabase[activeCategory].concat(customFoods.filter(f => f.category === activeCategory));
-
-            btnSpin.disabled = true; btnConfirm.disabled = true; iconEl.classList.add('spinning');
-            nameEl.textContent = "資料庫快篩抽籤中..."; infoEl.textContent = "正在向宇宙接收大數據建議...";
-            document.getElementById('msg').textContent = "";
-
-            await new Promise(r => setTimeout(r, 1200)); iconEl.classList.remove('spinning');
+            const totalPool = foodDatabase[activeCategory];
             const result = totalPool[Math.floor(Math.random() * totalPool.length)];
+
+            const now = new Date().getTime(); const ONE_DAY = 24 * 60 * 60 * 1000;
+            const recentlyEaten = cloudDataCache.some(item => { return item.foodName === result.name && (now - new Date(item.timestamp).getTime()) < ONE_DAY; });
+
+            if (recentlyEaten && retryCount < 3) {
+                alertBadge.style.display = 'block'; nameEl.textContent = `昨天剛吃過 ${result.name}!`;
+                await new Promise(r => setTimeout(r, 1200));
+                return spinFood(retryCount + 1);
+            }
+
             iconEl.className = `fa-solid ${result.icon}`; nameEl.textContent = result.name;
+            infoEl.textContent = "好好吃飯，就是對自己最好的照顧！";
+            selectedData = { name: result.name, icon: result.icon };
+            
+            if (retryCount === 0) addPoints(10);
 
-            try { const apiRes = await fetch('https://dummyjson.com/quotes/random'); const apiData = await apiRes.json(); infoEl.textContent = `"${apiData.quote}" — ${apiData.author}`; } 
-            catch (e) { infoEl.textContent = "好好吃飯，就是對自己最好的照顧！"; }
+            btnSpin.disabled = false; btnConfirm.disabled = false; document.getElementById('btn-cloud-spin').disabled = false;
+        }
 
-            selectedData = { name: result.name, icon: result.icon, quote: infoEl.textContent };
-            const now = new Date(); const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            drawHistory.unshift({ time: timeStr, name: result.name, icon: result.icon, isSaved: false });
-            if (drawHistory.length > 5) drawHistory.pop();
-            localStorage.setItem('myDrawHistory', JSON.stringify(drawHistory)); renderHistory();
-            btnSpin.disabled = false; btnConfirm.disabled = false;
+        async function spinCloudBox() {
+            if(cloudDataCache.length === 0) return alert("雲端還沒有你的紀錄喔！或是系統還在背景載入中，請稍後再試！");
+            
+            const uniqueFoodsMap = new Map();
+            cloudDataCache.forEach(item => { uniqueFoodsMap.set(item.foodName, item); });
+            const uniqueFoods = Array.from(uniqueFoodsMap.values());
+
+            const iconEl = document.getElementById('food-icon'); const nameEl = document.getElementById('food-name');
+            const infoEl = document.getElementById('api-info');
+            iconEl.classList.add('spinning'); nameEl.textContent = "正在翻找雲端愛店..."; infoEl.textContent = "保證是你不排斥吃過的店！";
+            document.getElementById('btn-spin').disabled = true; document.getElementById('btn-cloud-spin').disabled = true;
+
+            await new Promise(r => setTimeout(r, 1200));
+            iconEl.classList.remove('spinning');
+
+            const result = uniqueFoods[Math.floor(Math.random() * uniqueFoods.length)];
+            iconEl.className = `fa-solid ${result.foodIcon}`; nameEl.textContent = result.name || result.foodName;
+            infoEl.textContent = "從你的雲端歷史挖出來的愛店！";
+            selectedData = { name: result.foodName, icon: result.foodIcon };
+            
+            addPoints(15);
+
+            document.getElementById('btn-confirm').disabled = false;
+            document.getElementById('btn-spin').disabled = false; document.getElementById('btn-cloud-spin').disabled = false;
         }
 
         async function saveToSheet() {
             if (gasUrl === "YOUR_GAS_WEB_APP_URL") return alert("請先填入 GAS 網址！");
-            const msgEl = document.getElementById('msg'); const btnConfirm = document.getElementById('btn-confirm');
-            btnConfirm.disabled = true; msgEl.style.color = "#fca311"; msgEl.textContent = "⏳ 傳送至雲端...";
+            const msgEl = document.getElementById('msg'); document.getElementById('btn-confirm').disabled = true;
+            msgEl.style.color = "#fca311"; msgEl.textContent = "⏳ 傳送至雲端...";
             try {
                 const res = await fetch(gasUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(selectedData), redirect: "follow" });
                 const resText = await res.json();
                 if (resText.result === "success") {
-                    msgEl.style.color = "#2b9348"; msgEl.textContent = "✅ 已成功寫入試算表！";
-                    if(drawHistory.length > 0) { drawHistory[0].isSaved = true; localStorage.setItem('myDrawHistory', JSON.stringify(drawHistory)); renderHistory(); }
+                    msgEl.style.color = "#2b9348"; msgEl.textContent = "✅ 已成功寫入！下次重整頁面生效。";
+                    addPoints(50);
                 } else throw new Error();
-            } catch (err) { msgEl.style.color = "#e63946"; msgEl.textContent = "❌ 寫入失敗，請檢查權限。"; btnConfirm.disabled = false; }
+            } catch (err) { msgEl.style.color = "#e63946"; msgEl.textContent = "❌ 寫入失敗。"; document.getElementById('btn-confirm').disabled = false; }
         }
 
-        // ==================== 🌟 新增邏輯：預算決策器 ====================
-        const budgetOptions = [
-            { title: "乞丐超人", desc: "尋找超商友善時光或吃泡麵", color: "#6c757d" },
-            { title: "銅板小資", desc: "100元以內解決，省錢萬歲", color: "#4ecdc4" },
-            { title: "普通發揮", desc: "正常吃一餐，不省也不浪費", color: "#3498db" },
-            { title: "輕奢享受", desc: "直接加一顆溏心蛋或點心！", color: "#e67e22" },
-            { title: "財富自由", desc: "今天不看標價，想吃啥點啥！", color: "#e74c3c" }
-        ];
+        function generateReport() {
+            if(cloudDataCache.length === 0) return alert("雲端還沒有資料，趕快去存幾筆吃飯紀錄再來產生報告吧！");
+            let mainCount = 0, dessertCount = 0, bevCount = 0;
+            cloudDataCache.forEach(item => {
+                const i = item.foodIcon;
+                if (i.includes("mug") || i.includes("glass") || i.includes("apple")) bevCount++;
+                else if (i.includes("cake") || i.includes("ice") || i.includes("cookie") || i.includes("circle")) dessertCount++;
+                else mainCount++;
+            });
+            document.getElementById('chart-wrapper').style.display = 'block'; const commentEl = document.getElementById('report-comment'); commentEl.style.display = 'block';
+            
+            if (bevCount > mainCount) { commentEl.innerHTML = "⚠️ 警告：你這個月抽中的飲料竟然比正餐還多，含糖量已經爆表啦！"; }
+            else if (dessertCount > mainCount) { commentEl.innerHTML = "🍩 甜食怪出沒：甜點胃快比正餐胃大啦，注意熱量喔！"; }
+            else { commentEl.innerHTML = "✅ 飲食比例正常，繼續保持好好吃正餐的好習慣！"; commentEl.style.color = "#2b9348"; }
+            
+            const ctx = document.getElementById('myPieChart').getContext('2d');
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['🍱 主食正餐', '🍰 甜點點心', '🧋 飲料果汁'], datasets: [{ data: [mainCount, dessertCount, bevCount], backgroundColor: ['#ff9f43', '#e84393', '#00cec9'], borderWidth: 0, hoverOffset: 10 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom' } } } });
+        }
 
+        async function fetchCloudDataUI() {
+            if (gasUrl === "YOUR_GAS_WEB_APP_URL") return alert("請先填入 GAS 網址！");
+            const btn = document.getElementById('btn-cloud'); const list = document.getElementById('cloud-list-container');
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 載入中...';
+            try {
+                const res = await fetch(gasUrl); const resultData = await res.json();
+                if (resultData.result === "success") {
+                    cloudDataCache = resultData.data; list.innerHTML = "";
+                    resultData.data.reverse().forEach(item => {
+                        const d = new Date(item.timestamp);
+                        const t = isNaN(d.getTime()) ? item.timestamp : `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                        list.innerHTML += `<tr><td style="color:#666;">${t}</td><td><i class="fa-solid ${item.foodIcon}" style="color:#ff6b6b;"></i> <strong>${item.foodName}</strong></td></tr>`;
+                    });
+                    document.getElementById('cloud-container').style.display = "block";
+                    btn.innerHTML = '<i class="fa-solid fa-rotate"></i> 重新整理';
+                }
+            } catch (err) { alert("讀取失敗！"); btn.innerHTML = '載入完整雲端紀錄'; }
+            btn.disabled = false;
+        }
+
+        const budgetOptions = [ { title: "乞丐超人", desc: "尋找超商友善時光", color: "#6c757d" }, { title: "銅板小資", desc: "100元以內解決", color: "#4ecdc4" }, { title: "普通發揮", desc: "正常吃一餐", color: "#3498db" }, { title: "輕奢享受", desc: "加顆溏心蛋！", color: "#e67e22" }, { title: "財富自由", desc: "想吃啥點啥！", color: "#e74c3c" } ];
+        
         async function decideBudget() {
-            const resultBox = document.getElementById('budget-result');
-            const btn = document.getElementById('btn-budget');
-            btn.disabled = true; resultBox.style.border = "2px dashed #f1c40f";
-            
-            let count = 0;
-            const spinInterval = setInterval(() => {
-                const randomOpt = budgetOptions[Math.floor(Math.random() * budgetOptions.length)];
-                resultBox.innerHTML = `<div style="font-size: 1.5rem; font-weight: bold; color: ${randomOpt.color};">${randomOpt.title}</div>`;
-                count++;
-            }, 80);
-
-            await new Promise(r => setTimeout(r, 1200));
-            clearInterval(spinInterval);
-
-            const finalOpt = budgetOptions[Math.floor(Math.random() * budgetOptions.length)];
-            resultBox.innerHTML = `
-                <div style="font-size: 1.8rem; font-weight: bold; color: ${finalOpt.color}; margin-bottom: 5px;">${finalOpt.title}</div>
-                <div style="font-size: 0.95rem; color: #555;">${finalOpt.desc}</div>
-            `;
-            resultBox.style.border = `2px solid ${finalOpt.color}`;
-            btn.disabled = false;
+            const resBox = document.getElementById('budget-result'); const btn = document.getElementById('btn-budget'); btn.disabled = true; resBox.style.border = "2px dashed #f1c40f";
+            let c = 0; const spin = setInterval(() => { const r = budgetOptions[Math.floor(Math.random() * budgetOptions.length)]; resBox.innerHTML = `<div style="font-size:1.5rem;color:${r.color};">${r.title}</div>`; c++; }, 80);
+            await new Promise(r => setTimeout(r, 1200)); clearInterval(spin);
+            const f = budgetOptions[Math.floor(Math.random() * budgetOptions.length)]; resBox.innerHTML = `<div style="font-size:1.8rem;color:${f.color};">${f.title}</div><div style="font-size:0.95rem;">${f.desc}</div>`; resBox.style.border = `2px solid ${f.color}`; btn.disabled = false;
         }
-
-        // ==================== 邏輯：吃不吃決策器 (Yes/No) ====================
+        
         async function decideYesNo() {
-            const resultBox = document.getElementById('yes-no-result');
-            const btn = document.getElementById('btn-yesno');
-            btn.disabled = true; resultBox.style.border = "2px dashed #9b59b6";
-            
-            let count = 0;
-            const spinInterval = setInterval(() => {
-                resultBox.innerHTML = count % 2 === 0 ? '<i class="fa-solid fa-check" style="color: #2b9348; font-size: 30px;"></i>' : '<i class="fa-solid fa-xmark" style="color: #e63946; font-size: 30px;"></i>';
-                count++;
-            }, 100);
-
-            await new Promise(r => setTimeout(r, 1200)); clearInterval(spinInterval);
-            const isYes = Math.random() >= 0.5;
-            
-            if (isYes) { resultBox.innerHTML = '<span class="yes-text"><i class="fa-solid fa-circle-check"></i> 吃啦！哪次不吃！</span>'; resultBox.style.border = "2px solid #2b9348"; } 
-            else { resultBox.innerHTML = '<span class="no-text"><i class="fa-solid fa-circle-xmark"></i> 忍住！換一家或省錢！</span>'; resultBox.style.border = "2px solid #e63946"; }
+            const resBox = document.getElementById('yes-no-result'); const btn = document.getElementById('btn-yesno'); btn.disabled = true; resBox.style.border = "2px dashed #9b59b6";
+            let c = 0; const spin = setInterval(() => { resBox.innerHTML = c % 2 === 0 ? '<i class="fa-solid fa-check" style="color:#2b9348;font-size:30px;"></i>' : '<i class="fa-solid fa-xmark" style="color:#e63946;font-size:30px;"></i>'; c++; }, 100);
+            await new Promise(r => setTimeout(r, 1200)); clearInterval(spin);
+            if (Math.random() >= 0.5) { resBox.innerHTML = '<span class="yes-text"><i class="fa-solid fa-circle-check"></i> 吃啦！</span>'; resBox.style.border = "2px solid #2b9348"; } 
+            else { resBox.innerHTML = '<span class="no-text"><i class="fa-solid fa-circle-xmark"></i> 忍住！</span>'; resBox.style.border = "2px solid #e63946"; }
             btn.disabled = false;
-        }
-
-        // ==================== 邏輯：常吃清單與歷史 ====================
-        function addCustomFood() {
-            const inputEl = document.getElementById('custom-food-input'); const catEl = document.getElementById('custom-cat');
-            const foodName = inputEl.value.trim(); const category = catEl.value;
-            if (!foodName) return alert("請輸入食物名稱！"); if (customFoods.some(item => item.name === foodName)) return alert("這項美食已經在清單中囉！");
-            customFoods.push({ name: foodName, icon: "fa-star", category: category }); localStorage.setItem('myCustomFoods', JSON.stringify(customFoods));
-            inputEl.value = ""; renderCustomFoods();
-        }
-        function deleteCustomFood(index) { customFoods.splice(index, 1); localStorage.setItem('myCustomFoods', JSON.stringify(customFoods)); renderCustomFoods(); }
-        function renderCustomFoods() {
-            const container = document.getElementById('fav-list-container'); container.innerHTML = "";
-            if (customFoods.length === 0) { container.innerHTML = `<li class="fav-item" style="color:#999; justify-content:center;">目前無自訂食物。</li>`; return; }
-            const catMap = { 'main': {text: '主食', class: 'bg-main'}, 'dessert': {text: '甜點', class: 'bg-dessert'}, 'beverage': {text: '飲料', class: 'bg-bev'} };
-            customFoods.forEach((item, index) => {
-                const badgeInfo = catMap[item.category] || catMap['main'];
-                container.innerHTML += `<li class="fav-item"><span><span class="cat-badge ${badgeInfo.class}">${badgeInfo.text}</span><i class="fa-solid fa-star" style="color:#fca311; margin-right:4px;"></i> ${item.name}</span><button class="btn-del" onclick="deleteCustomFood(${index})"><i class="fa-solid fa-trash-can"></i></button></li>`;
-            });
-        }
-        function renderHistory() {
-            const container = document.getElementById('history-list-container'); container.innerHTML = "";
-            if (drawHistory.length === 0) { container.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding: 10px;">尚無紀錄</td></tr>`; return; }
-            drawHistory.forEach(item => {
-                const badge = item.isSaved ? `<span class="status-badge status-done"><i class="fa-solid fa-check"></i></span>` : `<span class="status-badge status-wait"><i class="fa-solid fa-xmark"></i></span>`;
-                container.innerHTML += `<tr><td>${item.time}</td><td><i class="fa-solid ${item.icon}" style="color:#ff6b6b; margin-right:4px;"></i> <strong>${item.name}</strong></td><td>${badge}</td></tr>`;
-            });
         }
     </script>
 </body>
