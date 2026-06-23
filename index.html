@@ -265,7 +265,7 @@
 
         window.onload = async () => {
             renderLeaderboard();
-            if (gasUrl !== "YOUR_GAS_WEB_APP_URL") {
+            if (gasUrl !== "https://script.google.com/macros/s/AKfycbzjxRBZfc5fnNC3ByJPZUabnb-o-kecHqL63a3dP7WmjJa9MZXCdd6W-2Nz0etLWwsf/exec") {
                 try {
                     const res = await fetch(gasUrl); const data = await res.json();
                     if(data.result === "success") cloudDataCache = data.data;
