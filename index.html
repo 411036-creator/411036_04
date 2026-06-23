@@ -35,6 +35,7 @@
         .btn-budget { background: #f1c40f; color: #333; } .btn-budget:hover:not(:disabled) { background: #f39c12; transform: translateY(-2px); color: white;}
         .btn-cloud { background: #3498db; color: white; } .btn-cloud:hover:not(:disabled) { background: #2980b9; transform: translateY(-2px); }
         .btn-special { background: #2c3e50; color: white; } .btn-special:hover:not(:disabled) { background: #1a252f; transform: translateY(-2px); }
+        .btn-api { background: #27ae60; color: white; } .btn-api:hover:not(:disabled) { background: #219653; transform: translateY(-2px); }
         button:disabled { background: #ced4da !important; color: #6c757d !important; cursor: not-allowed; transform: none !important; }
         #msg { font-size: 0.8rem; font-weight: bold; margin-top: 10px; height: 18px; }
 
@@ -97,6 +98,7 @@
         <div class="info-text"><strong style="color: #fca311;"><i class="fa-solid fa-quote-left"></i> 系統訊息：</strong><span id="api-info">點擊開始抽籤，解鎖今日指南。</span></div>
         
         <button class="btn-start" id="btn-spin" onclick="spinFood()"><i class="fa-solid fa-dice"></i> 隨機幫我選一家 (+10分)</button>
+        <button class="btn-api" id="btn-api-spin" onclick="spinFromWebAPI()"><i class="fa-solid fa-earth-americas"></i> 探索全球隨機美食 (+20分)</button>
         <button class="btn-special" id="btn-cloud-spin" onclick="spinCloudBox()"><i class="fa-solid fa-box-open"></i> 抽雲端愛店盲盒 (+15分)</button>
         <button class="btn-save" id="btn-confirm" onclick="saveToSheet()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> 確認吃這個，記錄下來！ (+50分)</button>
         <p id="msg"></p>
@@ -158,7 +160,7 @@
             beverage: [ { name: "經典珍珠奶茶", icon: "fa-mug-hot" }, { name: "冰美式咖啡", icon: "fa-mug-hot" }, { name: "無糖綠茶", icon: "fa-glass-water" }, { name: "芒果冰沙", icon: "fa-ice-cream" } ]
         };
 
-        // ⚠️ 請填入你的 GAS 網址
+        // ⚠️ 你的 GAS 網址已保留
         const gasUrl = "https://script.google.com/macros/s/AKfycbzjxRBZfc5fnNC3ByJPZUabnb-o-kecHqL63a3dP7WmjJa9MZXCdd6W-2Nz0etLWwsf/exec"; 
 
         let selectedData = { name: "", icon: "" };
@@ -238,6 +240,14 @@
             }
         };
 
+        // 鎖定/解鎖所有按鈕的共用函式
+        function toggleButtons(disabledStatus) {
+            document.getElementById('btn-spin').disabled = disabledStatus;
+            document.getElementById('btn-api-spin').disabled = disabledStatus;
+            document.getElementById('btn-cloud-spin').disabled = disabledStatus;
+            document.getElementById('btn-confirm').disabled = disabledStatus;
+        }
+
         function changeCategoryUI(iconClass) {
             document.getElementById('food-icon').className = `fa-solid ${iconClass}`;
             document.getElementById('food-name').textContent = "準備好就按下抽籤！";
@@ -246,13 +256,14 @@
             document.getElementById('cooldown-alert').style.display = 'none';
         }
 
+        // ==================== 1. 主輪盤抽籤 ====================
         async function spinFood(retryCount = 0) {
             const iconEl = document.getElementById('food-icon'); const nameEl = document.getElementById('food-name');
-            const infoEl = document.getElementById('api-info'); const btnSpin = document.getElementById('btn-spin');
-            const btnConfirm = document.getElementById('btn-confirm'); const alertBadge = document.getElementById('cooldown-alert');
+            const infoEl = document.getElementById('api-info'); const alertBadge = document.getElementById('cooldown-alert');
             
             alertBadge.style.display = 'none';
-            btnSpin.disabled = true; btnConfirm.disabled = true; document.getElementById('btn-cloud-spin').disabled = true;
+            toggleButtons(true);
+            
             iconEl.classList.add('spinning');
             nameEl.textContent = retryCount > 0 ? "重新洗牌中..." : "資料庫快篩抽籤中...";
             infoEl.textContent = retryCount > 0 ? "觸發防膩機制，幫你換一家！" : "正在向宇宙接收大數據建議...";
@@ -273,26 +284,81 @@
                 return spinFood(retryCount + 1);
             }
 
+            try {
+                const apiResponse = await fetch('https://dummyjson.com/quotes/random');
+                if (!apiResponse.ok) throw new Error("API 請求失敗");
+                const apiData = await apiResponse.json();
+                infoEl.textContent = `"${apiData.quote}" — ${apiData.author}`;
+            } catch (e) {
+                infoEl.textContent = "好好吃飯，就是對自己最好的照顧！";
+            }
+
             iconEl.className = `fa-solid ${result.icon}`; nameEl.textContent = result.name;
-            infoEl.textContent = "好好吃飯，就是對自己最好的照顧！";
             selectedData = { name: result.name, icon: result.icon };
             
             if (retryCount === 0) addPoints(10);
-
-            btnSpin.disabled = false; btnConfirm.disabled = false; document.getElementById('btn-cloud-spin').disabled = false;
+            toggleButtons(false);
         }
 
-        // ==================== 2. 雲端專屬盲盒抽籤 (已修復類別過濾) ====================
+        // ==================== 🌟 2. 網路食物 API 抽籤 (新增功能) ====================
+        async function spinFromWebAPI() {
+            const iconEl = document.getElementById('food-icon'); 
+            const nameEl = document.getElementById('food-name');
+            const infoEl = document.getElementById('api-info');
+            const alertBadge = document.getElementById('cooldown-alert');
+
+            alertBadge.style.display = 'none';
+            toggleButtons(true);
+
+            iconEl.classList.add('spinning');
+            nameEl.textContent = "🌍 跨海連線中...";
+            infoEl.textContent = "正在向國際美食資料庫 (TheMealDB) 尋找靈感...";
+
+            try {
+                // 呼叫 TheMealDB 的隨機餐點 API
+                const res = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
+                const data = await res.json();
+                const meal = data.meals[0];
+
+                await new Promise(r => setTimeout(r, 1200)); // 讓動畫轉一下
+                iconEl.classList.remove('spinning');
+
+                // 根據 API 回傳的食物分類，決定我們要顯示的圖示
+                let foodIcon = "fa-utensils"; 
+                const category = meal.strCategory.toLowerCase();
+                
+                if (category.includes("dessert")) foodIcon = "fa-cake-candles";
+                else if (category.includes("seafood")) foodIcon = "fa-fish";
+                else if (category.includes("chicken") || category.includes("pork") || category.includes("beef") || category.includes("lamb")) foodIcon = "fa-drumstick-bite";
+                else if (category.includes("vegan") || category.includes("vegetarian")) foodIcon = "fa-leaf";
+                else if (category.includes("pasta")) foodIcon = "fa-plate-wheat";
+                else if (category.includes("breakfast")) foodIcon = "fa-egg";
+
+                // 更新畫面
+                iconEl.className = `fa-solid ${foodIcon}`;
+                nameEl.textContent = meal.strMeal; // 英文餐點名稱
+                infoEl.textContent = `這是一道來自【${meal.strArea}】的 ${meal.strCategory} 料理！`;
+
+                selectedData = { name: meal.strMeal, icon: foodIcon };
+                addPoints(20); // 獲得 20 分
+                toggleButtons(false);
+
+            } catch (error) {
+                iconEl.classList.remove('spinning');
+                nameEl.textContent = "連線失敗 😢";
+                infoEl.textContent = "網路好像怪怪的，抓取異國料理失敗，請稍後再試！";
+                toggleButtons(false);
+                document.getElementById('btn-confirm').disabled = true; // 失敗就不給儲存
+            }
+        }
+
+        // ==================== 3. 雲端專屬盲盒抽籤 ====================
         async function spinCloudBox() {
             if(cloudDataCache.length === 0) return alert("雲端還沒有你的紀錄喔！或是系統還在背景載入中，請稍後再試！");
             
-            // 1. 先取得當前選中的類別 (main, dessert, beverage)
             const activeCategory = document.querySelector('input[name="foodCategory"]:checked').value;
-            
-            // 2. 抓出該類別「合法的食物清單」名稱，用來當作篩選標準
             const validFoods = foodDatabase[activeCategory].map(f => f.name);
 
-            // 3. 過濾雲端紀錄，去除重複，且「只保留符合當前類別」的食物
             const uniqueFoodsMap = new Map();
             cloudDataCache.forEach(item => { 
                 if (validFoods.includes(item.foodName)) {
@@ -301,37 +367,30 @@
             });
             const filteredCloudFoods = Array.from(uniqueFoodsMap.values());
 
-            // 4. 如果這個類別在雲端還沒有紀錄，給予提示並中斷抽籤
             if(filteredCloudFoods.length === 0) {
                 return alert("你的雲端紀錄裡還沒有「這個類別」的美食喔！先用一般抽籤存幾筆吧！");
             }
 
-            // --- 開始執行抽籤動畫 ---
             const iconEl = document.getElementById('food-icon'); 
             const nameEl = document.getElementById('food-name');
             const infoEl = document.getElementById('api-info');
             
+            toggleButtons(true);
             iconEl.classList.add('spinning'); 
             nameEl.textContent = "正在翻找雲端愛店..."; 
             infoEl.textContent = "保證是你不排斥吃過的店！";
-            document.getElementById('btn-spin').disabled = true; 
-            document.getElementById('btn-cloud-spin').disabled = true;
 
             await new Promise(r => setTimeout(r, 1200)); 
             iconEl.classList.remove('spinning');
 
-            // 5. 從過濾後的清單中隨機抽出結果
             const result = filteredCloudFoods[Math.floor(Math.random() * filteredCloudFoods.length)];
             iconEl.className = `fa-solid ${result.foodIcon}`; 
             nameEl.textContent = result.name || result.foodName;
             infoEl.textContent = "從你的雲端歷史挖出來的愛店！";
             selectedData = { name: result.foodName, icon: result.foodIcon };
             
-            addPoints(15); // 🏆 抽雲端盲盒加 15 分
-
-            document.getElementById('btn-confirm').disabled = false;
-            document.getElementById('btn-spin').disabled = false; 
-            document.getElementById('btn-cloud-spin').disabled = false;
+            addPoints(15); 
+            toggleButtons(false);
         }
 
         async function saveToSheet() {
