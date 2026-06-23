@@ -153,15 +153,48 @@
     </div>
 
     <script>
-        // 預設資料庫
+        // 超級擴充版資料庫 (各 100 種)
         const foodDatabase = {
-            main: [ { name: "台式滷肉飯", icon: "fa-bowl-rice" }, { name: "經典牛肉麵", icon: "fa-bowl-food" }, { name: "黃金蛋炒飯", icon: "fa-bowl-rice" }, { name: "手工水餃", icon: "fa-dumpling" }, { name: "義大利麵", icon: "fa-plate-wheat" }, { name: "瑪格麗特披薩", icon: "fa-pizza-slice" }, { name: "美式重磅漢堡", icon: "fa-burger" }, { name: "日式豚骨拉麵", icon: "fa-bowl-food" }, { name: "厚切排骨便當", icon: "fa-box" }, { name: "濃郁咖哩飯", icon: "fa-bowl-rice" } ],
-            dessert: [ { name: "巧克力蛋糕", icon: "fa-cake-candles" }, { name: "香草冰淇淋", icon: "fa-ice-cream" }, { name: "焦糖布丁", icon: "fa-circle" }, { name: "奶油泡芙", icon: "fa-cookie" } ],
-            beverage: [ { name: "經典珍珠奶茶", icon: "fa-mug-hot" }, { name: "冰美式咖啡", icon: "fa-mug-hot" }, { name: "無糖綠茶", icon: "fa-glass-water" }, { name: "芒果冰沙", icon: "fa-ice-cream" } ]
+            main: [ 
+                { name: "台式滷肉飯", icon: "fa-bowl-rice" }, { name: "經典牛肉麵", icon: "fa-bowl-food" }, { name: "黃金蛋炒飯", icon: "fa-bowl-rice" }, { name: "手工水餃", icon: "fa-dumpling" }, { name: "義大利麵", icon: "fa-plate-wheat" }, { name: "瑪格麗特披薩", icon: "fa-pizza-slice" }, { name: "美式重磅漢堡", icon: "fa-burger" }, { name: "日式豚骨拉麵", icon: "fa-bowl-food" }, { name: "厚切排骨便當", icon: "fa-box" }, { name: "濃郁咖哩飯", icon: "fa-bowl-rice" },
+                { name: "火雞肉飯", icon: "fa-bowl-rice" }, { name: "控肉飯", icon: "fa-bowl-rice" }, { name: "羊肉燴飯", icon: "fa-bowl-rice" }, { name: "鍋燒意麵", icon: "fa-bowl-food" }, { name: "大腸麵線", icon: "fa-bowl-food" }, { name: "生煎包", icon: "fa-dumpling" }, { name: "鍋貼", icon: "fa-dumpling" }, { name: "台南擔仔麵", icon: "fa-bowl-food" }, { name: "麻醬麵", icon: "fa-bowl-food" }, { name: "涼麵", icon: "fa-bowl-food" },
+                { name: "香雞排", icon: "fa-drumstick-bite" }, { name: "鹽酥雞", icon: "fa-drumstick-bite" }, { name: "肉圓", icon: "fa-circle" }, { name: "筒仔米糕", icon: "fa-bowl-rice" }, { name: "碗粿", icon: "fa-circle" }, { name: "臭豆腐", icon: "fa-cubes" }, { name: "蚵仔煎", icon: "fa-egg" }, { name: "豬血糕", icon: "fa-utensils" }, { name: "甜不辣", icon: "fa-bowl-food" }, { name: "滷味", icon: "fa-bowl-food" },
+                { name: "日式豬排飯", icon: "fa-bowl-rice" }, { name: "親子丼", icon: "fa-bowl-rice" }, { name: "牛丼", icon: "fa-bowl-rice" }, { name: "綜合壽司", icon: "fa-fish" }, { name: "生魚片丼飯", icon: "fa-fish" }, { name: "讚岐烏龍麵", icon: "fa-bowl-food" }, { name: "蕎麥麵", icon: "fa-bowl-food" }, { name: "關東煮", icon: "fa-bowl-food" }, { name: "章魚燒", icon: "fa-circle" }, { name: "大阪燒", icon: "fa-utensils" },
+                { name: "韓式石鍋拌飯", icon: "fa-bowl-rice" }, { name: "辣炒年糕", icon: "fa-utensils" }, { name: "韓式炸雞", icon: "fa-drumstick-bite" }, { name: "銅盤烤肉", icon: "fa-fire" }, { name: "部隊鍋", icon: "fa-bowl-food" }, { name: "泰式打拋豬飯", icon: "fa-bowl-rice" }, { name: "綠咖哩雞飯", icon: "fa-bowl-rice" }, { name: "月亮蝦餅", icon: "fa-circle" }, { name: "冬蔭功湯", icon: "fa-bowl-food" }, { name: "越南河粉", icon: "fa-bowl-food" },
+                { name: "海南雞飯", icon: "fa-bowl-rice" }, { name: "肉骨茶", icon: "fa-bowl-food" }, { name: "港式飲茶", icon: "fa-dumpling" }, { name: "燒臘便當", icon: "fa-box" }, { name: "腸粉", icon: "fa-utensils" }, { name: "蘿蔔糕", icon: "fa-utensils" }, { name: "皮蛋瘦肉粥", icon: "fa-bowl-rice" }, { name: "海鮮粥", icon: "fa-bowl-rice" }, { name: "麻辣火鍋", icon: "fa-fire" }, { name: "薑母鴨", icon: "fa-fire" },
+                { name: "羊肉爐", icon: "fa-fire" }, { name: "臭臭鍋", icon: "fa-fire" }, { name: "壽喜燒", icon: "fa-fire" }, { name: "鐵板燒", icon: "fa-fire" }, { name: "炭烤牛排", icon: "fa-utensils" }, { name: "烤鮭魚", icon: "fa-fish" }, { name: "蒲燒鰻魚飯", icon: "fa-fish" }, { name: "魚排便當", icon: "fa-box" }, { name: "虱目魚肚粥", icon: "fa-fish" }, { name: "蔥抓餅", icon: "fa-circle" },
+                { name: "起司蛋餅", icon: "fa-egg" }, { name: "飯糰", icon: "fa-bowl-rice" }, { name: "燒餅油條", icon: "fa-bread-slice" }, { name: "鹹豆漿", icon: "fa-bowl-food" }, { name: "烤肉串", icon: "fa-utensils" }, { name: "烤香腸", icon: "fa-hotdog" }, { name: "大亨堡", icon: "fa-hotdog" }, { name: "潛艇堡", icon: "fa-bread-slice" }, { name: "總匯三明治", icon: "fa-bread-slice" }, { name: "法式吐司", icon: "fa-bread-slice" },
+                { name: "生菜沙拉", icon: "fa-leaf" }, { name: "水煮健康餐盒", icon: "fa-box" }, { name: "素食自助餐", icon: "fa-leaf" }, { name: "舒肥雞胸肉", icon: "fa-drumstick-bite" }, { name: "烤地瓜", icon: "fa-carrot" }, { name: "墨西哥捲餅", icon: "fa-utensils" }, { name: "西班牙海鮮燉飯", icon: "fa-bowl-rice" }, { name: "法式鹹派", icon: "fa-pie-chart" }, { name: "英式炸魚薯條", icon: "fa-fish" }, { name: "印度烤餅與咖哩", icon: "fa-bread-slice" },
+                { name: "土耳其烤肉", icon: "fa-utensils" }, { name: "沙威瑪", icon: "fa-hotdog" }, { name: "新疆羊肉串", icon: "fa-utensils" }, { name: "北京烤鴨", icon: "fa-drumstick-bite" }, { name: "重慶烤魚", icon: "fa-fish" }, { name: "蘭州拉麵", icon: "fa-bowl-food" }, { name: "西安肉夾饃", icon: "fa-burger" }, { name: "麥片牛奶", icon: "fa-bowl-rice" }, { name: "海苔包飯", icon: "fa-circle" }, { name: "焗烤千層麵", icon: "fa-plate-wheat" }
+            ],
+            dessert: [ 
+                { name: "巧克力蛋糕", icon: "fa-cake-candles" }, { name: "香草冰淇淋", icon: "fa-ice-cream" }, { name: "焦糖布丁", icon: "fa-circle" }, { name: "奶油泡芙", icon: "fa-cookie" }, { name: "草莓千層派", icon: "fa-cake-candles" }, { name: "起司蛋糕", icon: "fa-cake-candles" }, { name: "提拉米蘇", icon: "fa-cake-candles" }, { name: "黑森林蛋糕", icon: "fa-cake-candles" }, { name: "抹茶捲", icon: "fa-cake-candles" }, { name: "檸檬塔", icon: "fa-circle" },
+                { name: "葡式蛋塔", icon: "fa-circle" }, { name: "蘋果派", icon: "fa-circle" }, { name: "藍莓派", icon: "fa-circle" }, { name: "法式馬卡龍", icon: "fa-cookie" }, { name: "可麗露", icon: "fa-circle" }, { name: "瑪德蓮", icon: "fa-cookie" }, { name: "費南雪", icon: "fa-cookie" }, { name: "英式司康", icon: "fa-cookie" }, { name: "蜂蜜鬆餅", icon: "fa-stroopwafel" }, { name: "法式舒芙蕾", icon: "fa-cake-candles" },
+                { name: "鮮奶酪", icon: "fa-circle" }, { name: "抹茶霜淇淋", icon: "fa-ice-cream" }, { name: "巧克力聖代", icon: "fa-ice-cream" }, { name: "芒果剉冰", icon: "fa-ice-cream" }, { name: "珍珠奶茶雪花冰", icon: "fa-ice-cream" }, { name: "水果冰棒", icon: "fa-ice-cream" }, { name: "脆皮甜筒", icon: "fa-ice-cream" }, { name: "綜合豆花", icon: "fa-bowl-rice" }, { name: "嫩仙草凍", icon: "fa-bowl-rice" }, { name: "檸檬愛玉", icon: "fa-bowl-rice" },
+                { name: "芝麻湯圓", icon: "fa-bowl-rice" }, { name: "花生麻糬", icon: "fa-circle" }, { name: "冰糖綠豆湯", icon: "fa-bowl-rice" }, { name: "紅豆紫米粥", icon: "fa-bowl-rice" }, { name: "蜜芋頭湯", icon: "fa-bowl-rice" }, { name: "薏仁湯", icon: "fa-bowl-rice" }, { name: "八寶粥", icon: "fa-bowl-rice" }, { name: "濃郁芝麻糊", icon: "fa-bowl-rice" }, { name: "杏仁豆腐", icon: "fa-bowl-rice" }, { name: "養生龜苓膏", icon: "fa-bowl-rice" },
+                { name: "古早味糖葫蘆", icon: "fa-apple-whole" }, { name: "原味雞蛋糕", icon: "fa-cookie" }, { name: "奶油車輪餅", icon: "fa-circle" }, { name: "紅豆鯛魚燒", icon: "fa-fish" }, { name: "酥炸地瓜球", icon: "fa-circle" }, { name: "白糖粿", icon: "fa-circle" }, { name: "雙胞胎", icon: "fa-circle" }, { name: "糖霜甜甜圈", icon: "fa-circle" }, { name: "吉拿棒 (Churros)", icon: "fa-utensils" }, { name: "閃電泡芙", icon: "fa-cookie" },
+                { name: "栗子蒙布朗", icon: "fa-cake-candles" }, { name: "巧克力慕斯", icon: "fa-cake-candles" }, { name: "伯爵戚風蛋糕", icon: "fa-cake-candles" }, { name: "檸檬磅蛋糕", icon: "fa-cake-candles" }, { name: "核桃布朗尼", icon: "fa-cookie" }, { name: "奶油曲奇餅", icon: "fa-cookie" }, { name: "健康燕麥餅乾", icon: "fa-cookie" }, { name: "杏仁牛軋糖", icon: "fa-cookie" }, { name: "土鳳梨酥", icon: "fa-cookie" }, { name: "蛋黃酥", icon: "fa-circle" },
+                { name: "綠豆椪", icon: "fa-circle" }, { name: "台中太陽餅", icon: "fa-circle" }, { name: "老婆餅", icon: "fa-circle" }, { name: "芋頭酥", icon: "fa-circle" }, { name: "手工麻花捲", icon: "fa-utensils" }, { name: "沙琪瑪", icon: "fa-circle" }, { name: "冰心綠豆糕", icon: "fa-circle" }, { name: "古早味狀元糕", icon: "fa-circle" }, { name: "香蕉飴涼糕", icon: "fa-circle" }, { name: "桂花糕", icon: "fa-circle" },
+                { name: "紅豆羊羹", icon: "fa-circle" }, { name: "日式銅鑼燒", icon: "fa-circle" }, { name: "草莓大福", icon: "fa-circle" }, { name: "黃豆粉蕨餅", icon: "fa-circle" }, { name: "醬油烤糰子", icon: "fa-circle" }, { name: "水信玄餅", icon: "fa-circle" }, { name: "長崎蛋糕", icon: "fa-cake-candles" }, { name: "蜂蜜蛋糕", icon: "fa-cake-candles" }, { name: "北海道生乳捲", icon: "fa-cake-candles" }, { name: "冰火菠蘿油", icon: "fa-bread-slice" },
+                { name: "芋頭西米露", icon: "fa-bowl-rice" }, { name: "摩摩喳喳", icon: "fa-bowl-rice" }, { name: "芒果糯米飯", icon: "fa-bowl-rice" }, { name: "泰式椰汁糕", icon: "fa-circle" }, { name: "娘惹糕", icon: "fa-circle" }, { name: "炸馬蹄條", icon: "fa-utensils" }, { name: "芝麻球", icon: "fa-circle" }, { name: "炸湯圓", icon: "fa-circle" }, { name: "糖炒栗子", icon: "fa-circle" }, { name: "拔絲地瓜", icon: "fa-carrot" },
+                { name: "焦糖烤布蕾", icon: "fa-circle" }, { name: "綜合水果拼盤", icon: "fa-apple-whole" }, { name: "糖霜肉桂捲", icon: "fa-bread-slice" }, { name: "法式可頌", icon: "fa-bread-slice" }, { name: "奶酥麵包", icon: "fa-bread-slice" }, { name: "克林姆麵包", icon: "fa-bread-slice" }, { name: "紅豆麵包", icon: "fa-bread-slice" }, { name: "經典菠蘿麵包", icon: "fa-bread-slice" }, { name: "生吐司", icon: "fa-bread-slice" }, { name: "香蒜麵包", icon: "fa-bread-slice" }
+            ],
+            beverage: [ 
+                { name: "經典珍珠奶茶", icon: "fa-mug-hot" }, { name: "冰美式咖啡", icon: "fa-mug-hot" }, { name: "無糖綠茶", icon: "fa-glass-water" }, { name: "芒果冰沙", icon: "fa-ice-cream" }, { name: "波霸奶綠", icon: "fa-mug-hot" }, { name: "鐵觀音奶茶", icon: "fa-mug-hot" }, { name: "皇家伯爵奶茶", icon: "fa-mug-hot" }, { name: "焦糖瑪奇朵", icon: "fa-mug-hot" }, { name: "榛果拿鐵", icon: "fa-mug-hot" }, { name: "香草拿鐵", icon: "fa-mug-hot" },
+                { name: "靜岡抹茶拿鐵", icon: "fa-mug-hot" }, { name: "日本焙茶拿鐵", icon: "fa-mug-hot" }, { name: "斯里蘭卡紅茶拿鐵", icon: "fa-mug-hot" }, { name: "黑糖珍珠鮮奶", icon: "fa-glass-water" }, { name: "大甲芋頭鮮奶", icon: "fa-glass-water" }, { name: "現打木瓜牛奶", icon: "fa-glass-water" }, { name: "西瓜牛奶", icon: "fa-glass-water" }, { name: "香蕉牛奶", icon: "fa-glass-water" }, { name: "酪梨布丁牛奶", icon: "fa-glass-water" }, { name: "蘋果牛奶", icon: "fa-glass-water" },
+                { name: "綠豆沙牛奶", icon: "fa-glass-water" }, { name: "紅豆沙牛奶", icon: "fa-glass-water" }, { name: "熱美式咖啡", icon: "fa-mug-hot" }, { name: "義式濃縮咖啡", icon: "fa-mug-hot" }, { name: "經典卡布奇諾", icon: "fa-mug-hot" }, { name: "摩卡咖啡", icon: "fa-mug-hot" }, { name: "西西里檸檬咖啡", icon: "fa-glass-water" }, { name: "燕麥奶拿鐵", icon: "fa-mug-hot" }, { name: "杏仁奶拿鐵", icon: "fa-mug-hot" }, { name: "冰滴咖啡", icon: "fa-glass-water" },
+                { name: "冷萃咖啡", icon: "fa-glass-water" }, { name: "錫蘭紅茶", icon: "fa-glass-water" }, { name: "茉莉綠茶", icon: "fa-glass-water" }, { name: "凍頂烏龍茶", icon: "fa-glass-water" }, { name: "台灣四季春", icon: "fa-glass-water" }, { name: "炭焙鐵觀音", icon: "fa-glass-water" }, { name: "雲南普洱茶", icon: "fa-glass-water" }, { name: "黃金麥茶", icon: "fa-glass-water" }, { name: "古早味冬瓜茶", icon: "fa-glass-water" }, { name: "冰糖菊花茶", icon: "fa-glass-water" },
+                { name: "洛神花茶", icon: "fa-glass-water" }, { name: "玫瑰花茶", icon: "fa-glass-water" }, { name: "洋甘菊舒眠茶", icon: "fa-mug-hot" }, { name: "清涼薄荷茶", icon: "fa-glass-water" }, { name: "韓式蜂蜜柚子茶", icon: "fa-mug-hot" }, { name: "黑糖薑母茶", icon: "fa-mug-hot" }, { name: "桂圓紅棗茶", icon: "fa-mug-hot" }, { name: "檸檬紅茶", icon: "fa-glass-water" }, { name: "翡翠檸檬綠茶", icon: "fa-glass-water" }, { name: "梅子綠茶", icon: "fa-glass-water" },
+                { name: "百香果綠茶", icon: "fa-glass-water" }, { name: "養樂多綠茶", icon: "fa-glass-water" }, { name: "葡萄冰沙", icon: "fa-ice-cream" }, { name: "草莓牛奶冰沙", icon: "fa-ice-cream" }, { name: "巧克力碎片冰沙", icon: "fa-ice-cream" }, { name: "星冰樂", icon: "fa-ice-cream" }, { name: "抹茶紅豆冰沙", icon: "fa-ice-cream" }, { name: "現榨柳橙汁", icon: "fa-glass-water" }, { name: "鮮榨蘋果汁", icon: "fa-glass-water" }, { name: "奇異果汁", icon: "fa-glass-water" },
+                { name: "紅寶石葡萄柚汁", icon: "fa-glass-water" }, { name: "鮮榨檸檬汁", icon: "fa-glass-water" }, { name: "蔓越莓果汁", icon: "fa-glass-water" }, { name: "綜合果汁", icon: "fa-glass-water" }, { name: "白甘蔗汁", icon: "fa-glass-water" }, { name: "清涼椰子水", icon: "fa-bottle-water" }, { name: "檸檬氣泡水", icon: "fa-bottle-water" }, { name: "可樂", icon: "fa-glass-water" }, { name: "雪碧", icon: "fa-glass-water" }, { name: "芬達", icon: "fa-glass-water" },
+                { name: "黑松沙士", icon: "fa-glass-water" }, { name: "蘋果西打", icon: "fa-glass-water" }, { name: "薑汁汽水", icon: "fa-glass-water" }, { name: "原味蘇打水", icon: "fa-bottle-water" }, { name: "運動飲料", icon: "fa-bottle-water" }, { name: "能量飲料", icon: "fa-bottle-water" }, { name: "冰淇淋紅茶", icon: "fa-glass-water" }, { name: "漂浮可樂", icon: "fa-glass-water" }, { name: "純天然蜂蜜水", icon: "fa-glass-water" }, { name: "蜂蜜檸檬", icon: "fa-glass-water" },
+                { name: "蘆薈露", icon: "fa-glass-water" }, { name: "仙草蜜", icon: "fa-glass-water" }, { name: "冰糖燕窩", icon: "fa-bowl-rice" }, { name: "白蘭氏雞精", icon: "fa-bottle-water" }, { name: "滴雞精", icon: "fa-mug-hot" }, { name: "非基改豆漿", icon: "fa-glass-water" }, { name: "古早味米漿", icon: "fa-glass-water" }, { name: "暖胃杏仁茶", icon: "fa-mug-hot" }, { name: "客家擂茶", icon: "fa-mug-hot" }, { name: "鹿港麵茶", icon: "fa-mug-hot" },
+                { name: "水蜜桃氣泡果汁", icon: "fa-glass-water" }, { name: "無酒精香檳", icon: "fa-wine-glass" }, { name: "無酒精啤酒", icon: "fa-beer-mug-empty" }, { name: "無酒精特調 (Mocktail)", icon: "fa-martini-glass" }, { name: "健康康普茶", icon: "fa-glass-water" }, { name: "水蜜桃紅烏龍", icon: "fa-glass-water" }, { name: "海鹽奶蓋綠茶", icon: "fa-glass-water" }, { name: "芝士奶蓋紅茶", icon: "fa-glass-water" }, { name: "玫瑰鹽奶蓋青", icon: "fa-glass-water" }, { name: "鮮橙綠茶", icon: "fa-glass-water" }
+            ]
         };
 
         // 幫你自動填回你的 GAS 網址囉！
-        const gasUrl = "https://script.google.com/macros/s/AKfycbzjxRBZfc5fnNC3ByJPZUabnb-o-kecHqL63a3dP7WmjJa9MZXCdd6W-2Nz0etLWwsf/exec"; 
+        const gasUrl = "https://script.google.com/macros/s/AKfybyVrngSLEIIUU5M5bURbz8Tq--ehOtI-_BoPBUUqLVWV6BQm7OtyqxUWAq-JEBkumn/exec"; 
 
         let selectedData = { name: "", icon: "" };
         let cloudDataCache = []; 
@@ -265,7 +298,7 @@
             
             iconEl.classList.add('spinning');
             nameEl.textContent = retryCount > 0 ? "重新洗牌中..." : "資料庫快篩抽籤中...";
-            infoEl.textContent = retryCount > 0 ? "觸發防膩機制，幫你換一家！" : "正在向宇宙接收大數據建議...";
+            infoEl.textContent = retryCount > 0 ? "觸發防膩機制，幫你換一家！" : "從全新擴充的 300 道大菜單為你推薦...";
 
             await new Promise(r => setTimeout(r, 1000));
             iconEl.classList.remove('spinning');
@@ -299,7 +332,7 @@
             toggleButtons(false);
         }
 
-        // ==================== 🌟 2. 網路食物 API 抽籤 (修正版：完美對應標籤分類) ====================
+        // ==================== 🌟 2. 網路食物 API 抽籤 ====================
         async function spinFromWebAPI() {
             const iconEl = document.getElementById('food-icon'); 
             const nameEl = document.getElementById('food-name');
@@ -313,14 +346,12 @@
             nameEl.textContent = "🌍 跨海連線中...";
             infoEl.textContent = "正在根據你選擇的類別，向國際大數據尋找靈感...";
 
-            // 獲取當前被選中的標籤分類 (main / dessert / beverage)
             const activeCategory = document.querySelector('input[name="foodCategory"]:checked').value;
 
             try {
                 let apiUrl = "";
                 let isBeverage = false;
 
-                // 根據不同分類，串接正確的 API 或過濾條件
                 if (activeCategory === "main") {
                     const mainCategories = ["Beef", "Chicken", "Pork", "Seafood", "Pasta", "Vegetarian", "Lamb"];
                     const randomCat = mainCategories[Math.floor(Math.random() * mainCategories.length)];
@@ -328,7 +359,6 @@
                 } else if (activeCategory === "dessert") {
                     apiUrl = `https://www.themealdb.com/api/json/v1/1/filter.php?c=Dessert`;
                 } else if (activeCategory === "beverage") {
-                    // TheMealDB 沒有飲料，故改串接姊妹 API (TheCocktailDB) 的無酒精飲料
                     apiUrl = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic`;
                     isBeverage = true;
                 }
@@ -336,7 +366,7 @@
                 const res = await fetch(apiUrl);
                 const data = await res.json();
 
-                await new Promise(r => setTimeout(r, 1200)); // 讓動畫效果跑一下
+                await new Promise(r => setTimeout(r, 1200)); 
                 iconEl.classList.remove('spinning');
 
                 let foodName = "";
@@ -364,7 +394,6 @@
                     }
                 }
 
-                // 更新畫面與暫存資料
                 iconEl.className = `fa-solid ${foodIcon}`;
                 nameEl.textContent = foodName;
                 infoEl.textContent = infoText;
@@ -442,8 +471,8 @@
             let mainCount = 0, dessertCount = 0, bevCount = 0;
             cloudDataCache.forEach(item => {
                 const i = item.foodIcon;
-                if (i.includes("mug") || i.includes("glass") || i.includes("apple")) bevCount++;
-                else if (i.includes("cake") || i.includes("ice") || i.includes("cookie") || i.includes("circle")) dessertCount++;
+                if (i.includes("mug") || i.includes("glass") || i.includes("bottle") || i.includes("beer") || i.includes("wine") || i.includes("martini")) bevCount++;
+                else if (i.includes("cake") || i.includes("ice") || i.includes("cookie") || i.includes("circle") || i.includes("stroopwafel") || i.includes("apple")) dessertCount++;
                 else mainCount++;
             });
             document.getElementById('chart-wrapper').style.display = 'block'; const commentEl = document.getElementById('report-comment'); commentEl.style.display = 'block';
