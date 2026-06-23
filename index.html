@@ -160,8 +160,8 @@
             beverage: [ { name: "經典珍珠奶茶", icon: "fa-mug-hot" }, { name: "冰美式咖啡", icon: "fa-mug-hot" }, { name: "無糖綠茶", icon: "fa-glass-water" }, { name: "芒果冰沙", icon: "fa-ice-cream" } ]
         };
 
-        // ⚠️ 你的 GAS 網址已保留
-        const gasUrl = "https://script.google.com/macros/s/AKfycbzjxRBZfc5fnNC3ByJPZUabnb-o-kecHqL63a3dP7WmjJa9MZXCdd6W-2Nz0etLWwsf/exec"; 
+        // 幫你自動填回你的 GAS 網址囉！
+        const gasUrl = "https://script.google.com/macros/s/AKfybyVrngSLEIIUU5M5bURbz8Tq--ehOtI-_BoPBUUqLVWV6BQm7OtyqxUWAq-JEBkumn/exec"; 
 
         let selectedData = { name: "", icon: "" };
         let cloudDataCache = []; 
@@ -240,7 +240,6 @@
             }
         };
 
-        // 鎖定/解鎖所有按鈕的共用函式
         function toggleButtons(disabledStatus) {
             document.getElementById('btn-spin').disabled = disabledStatus;
             document.getElementById('btn-api-spin').disabled = disabledStatus;
@@ -300,7 +299,7 @@
             toggleButtons(false);
         }
 
-        // ==================== 🌟 2. 網路食物 API 抽籤 (新增功能) ====================
+        // ==================== 🌟 2. 網路食物 API 抽籤 (修正版：完美對應標籤分類) ====================
         async function spinFromWebAPI() {
             const iconEl = document.getElementById('food-icon'); 
             const nameEl = document.getElementById('food-name');
@@ -312,35 +311,66 @@
 
             iconEl.classList.add('spinning');
             nameEl.textContent = "🌍 跨海連線中...";
-            infoEl.textContent = "正在向國際美食資料庫 (TheMealDB) 尋找靈感...";
+            infoEl.textContent = "正在根據你選擇的類別，向國際大數據尋找靈感...";
+
+            // 獲取當前被選中的標籤分類 (main / dessert / beverage)
+            const activeCategory = document.querySelector('input[name="foodCategory"]:checked').value;
 
             try {
-                // 呼叫 TheMealDB 的隨機餐點 API
-                const res = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
-                const data = await res.json();
-                const meal = data.meals[0];
+                let apiUrl = "";
+                let isBeverage = false;
 
-                await new Promise(r => setTimeout(r, 1200)); // 讓動畫轉一下
+                // 根據不同分類，串接正確的 API 或過濾條件
+                if (activeCategory === "main") {
+                    const mainCategories = ["Beef", "Chicken", "Pork", "Seafood", "Pasta", "Vegetarian", "Lamb"];
+                    const randomCat = mainCategories[Math.floor(Math.random() * mainCategories.length)];
+                    apiUrl = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${randomCat}`;
+                } else if (activeCategory === "dessert") {
+                    apiUrl = `https://www.themealdb.com/api/json/v1/1/filter.php?c=Dessert`;
+                } else if (activeCategory === "beverage") {
+                    // TheMealDB 沒有飲料，故改串接姊妹 API (TheCocktailDB) 的無酒精飲料
+                    apiUrl = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic`;
+                    isBeverage = true;
+                }
+
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+
+                await new Promise(r => setTimeout(r, 1200)); // 讓動畫效果跑一下
                 iconEl.classList.remove('spinning');
 
-                // 根據 API 回傳的食物分類，決定我們要顯示的圖示
-                let foodIcon = "fa-utensils"; 
-                const category = meal.strCategory.toLowerCase();
-                
-                if (category.includes("dessert")) foodIcon = "fa-cake-candles";
-                else if (category.includes("seafood")) foodIcon = "fa-fish";
-                else if (category.includes("chicken") || category.includes("pork") || category.includes("beef") || category.includes("lamb")) foodIcon = "fa-drumstick-bite";
-                else if (category.includes("vegan") || category.includes("vegetarian")) foodIcon = "fa-leaf";
-                else if (category.includes("pasta")) foodIcon = "fa-plate-wheat";
-                else if (category.includes("breakfast")) foodIcon = "fa-egg";
+                let foodName = "";
+                let foodIcon = "fa-utensils";
+                let infoText = "";
 
-                // 更新畫面
+                if (isBeverage) {
+                    const drink = data.drinks[Math.floor(Math.random() * data.drinks.length)];
+                    foodName = drink.strDrink;
+                    foodIcon = "fa-mug-hot";
+                    infoText = "這是一杯來自國際調飲庫的精選【Non-Alcoholic】解渴飲品！";
+                } else {
+                    const meal = data.meals[Math.floor(Math.random() * data.meals.length)];
+                    foodName = meal.strMeal;
+                    
+                    if (activeCategory === "dessert") {
+                        foodIcon = "fa-cake-candles";
+                        infoText = "這是一道來自國際美食庫的精選【Dessert】甜點！";
+                    } else {
+                        foodIcon = "fa-bowl-food";
+                        if (apiUrl.includes("Seafood")) foodIcon = "fa-fish";
+                        else if (apiUrl.includes("Pasta")) foodIcon = "fa-plate-wheat";
+                        else if (apiUrl.includes("Chicken")) foodIcon = "fa-drumstick-bite";
+                        infoText = "這是一道由國際開源資料庫推薦的美味正餐料理！";
+                    }
+                }
+
+                // 更新畫面與暫存資料
                 iconEl.className = `fa-solid ${foodIcon}`;
-                nameEl.textContent = meal.strMeal; // 英文餐點名稱
-                infoEl.textContent = `這是一道來自【${meal.strArea}】的 ${meal.strCategory} 料理！`;
+                nameEl.textContent = foodName;
+                infoEl.textContent = infoText;
 
-                selectedData = { name: meal.strMeal, icon: foodIcon };
-                addPoints(20); // 獲得 20 分
+                selectedData = { name: foodName, icon: foodIcon };
+                addPoints(20); 
                 toggleButtons(false);
 
             } catch (error) {
@@ -348,7 +378,7 @@
                 nameEl.textContent = "連線失敗 😢";
                 infoEl.textContent = "網路好像怪怪的，抓取異國料理失敗，請稍後再試！";
                 toggleButtons(false);
-                document.getElementById('btn-confirm').disabled = true; // 失敗就不給儲存
+                document.getElementById('btn-confirm').disabled = true;
             }
         }
 
